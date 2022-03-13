@@ -26,16 +26,39 @@ namespace my_api.Controllers
             comments.Add(new Comment(4, 1, "Я катя", 4, 25, 0));
 
             films = new List<Film>();
-            films.Add(new Film(1, "Начало", "Профессиональные воры внедряются в сон наследника огромной империи. Фантастический боевик Кристофера Нолана", "https://avatars.mds.yandex.net/get-kinopoisk-image/1600647/a4a709fc-8dd9-41f4-8105-17d6e0b8bed0/2560x", 8.6));
+            films.Add(new Film(1, "Начало", "Профессиональные воры внедряются в сон наследника огромной империи. Фантастический боевик Кристофера Нолана", "https://avatars.mds.yandex.net/get-kinopoisk-image/1600647/a4a709fc-8dd9-41f4-8105-17d6e0b8bed0/2560x", 8.7));
             films.Add(new Film(2, "Довод", "Протагонист пытается обезвредить террориста с помощью уникальной технологии. Блокбастер-пазл Кристофера Нолана", "https://games.mail.ru/hotbox/content_files/gallery/2020/08/12/766acda8f2a347baa1a130a7a40d4d77.jpeg", 7.8));
-            films.Add(new Film(3, "Интерстеллар", "Фантастический эпос про задыхающуюся Землю, космические полеты и парадоксы времени. «Оскар» за спецэффекты", "https://avatars.mds.yandex.net/get-zen_doc/3866587/pub_5f78ac3a61e6d41ef54175dd_5f78cef7952c3b370e175229/scale_1200", 8.9));
+            films.Add(new Film(3, "Интерстеллар", "Фантастический эпос про задыхающуюся Землю, космические полеты и парадоксы времени. «Оскар» за спецэффекты", "https://avatars.mds.yandex.net/get-zen_doc/3866587/pub_5f78ac3a61e6d41ef54175dd_5f78cef7952c3b370e175229/scale_1200", 8.6));
+            films.Add(new Film(4, "Зеленая миля", "В тюрьме для смертников появляется заключенный с божественным даром. Мистическая драма по роману Стивена Кинга", "https://artfiles.alphacoders.com/992/thumb-1920-99225.jpg", 9.1));
+            films.Add(new Film(5, "Властелин колец: Возвращение короля", "Арагорн штурмует Мордор, а Фродо устал бороться с чарами кольца. Эффектный финал саги, собравший 11 «Оскаров»", "https://www.film.ru/sites/default/files/movies/posters/The-Lord-of-the-Rings-The-Return-of-the-King-3.jpg", 8.6));
+            films.Add(new Film(6, "Темный рыцарь", "У Бэтмена появляется новый враг — философ-террорист Джокер. Кинокомикс, который вывел жанр на новый уровень", "https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/ad7b6a28200049.55bdb46e8f33f.jpg", 8.5));
+            films.Add(new Film(7, "Рататуй", "Крысенок-кулинар попадает на кухню ресторана. Аппетитная комедия с «Оскаром» за лучший анимационный фильм", "https://avatars.mds.yandex.net/get-kinopoisk-image/1900788/daed0206-3a64-4397-a6a9-12f33d7ab092/orig", 8.0));
+            films.Add(new Film(8, "Шрэк 2", "Счастью новобрачных огров мешают Фея-крестная и ее сын. Номинация на «Оскар» и первое появление Кота в сапогах", "https://www.kinogallery.com/images/shrek2/kinogallery.com-shrek2-265160.jpg", 7.7));
+            films.Add(new Film(9, "Крестный отец 2 ", "Юность Вито Корлеоне и первые шаги его сына Майкла в роли главы клана — сразу и приквел, и сиквел. Шесть «Оскаров»", "https://www.yekmovie.tv/wp-content/uploads/2018/03/tt0071562_big.jpg", 8.5));
+            films.Add(new Film(10, "Один дома 2: Затерянный в Нью-Йорке", "Неугомонный малыш Кевин в одиночку покоряет Нью-Йорк. Очередной шедевр от Джона Хьюза и Криса Коламбуса", "https://www.film.ru/sites/default/files/movies/posters/Home-Alone-2-Lost-in-New-York-3.jpg", 8.2));
         }
 
 
         [HttpGet("list")]
-        public CommonResponse GetFilmList()
+        public CommonResponse GetFilmList(int page = 1, int count = 10)
         {
-            CommonResponse response = new CommonResponse(films, films.Count);
+            int iBegin = page * count - count;
+            int iEnd = page * count;
+            iEnd = (iEnd>films.Count) ? films.Count : iEnd;
+            List<Film> filmPage = new List<Film>(page);
+            CommonResponse response;
+            try
+            {
+                for (int i = iBegin; i < iEnd; i++)
+                {
+                    filmPage.Add(films[i]);
+                }
+                response = new CommonResponse(filmPage, films.Count);
+            }
+            catch (Exception e)
+            {
+                response = new CommonResponse(films, films.Count);
+            }
             return response;
         }
 
