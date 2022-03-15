@@ -7,7 +7,6 @@
         public string Description { get; set; }
         public string Url { get; set; }
         public double Rate { get; set; }
-        public List<Comment> Comments { get; set; }
 
         public Film(int id, string name, string description, string url, double rate)
         {

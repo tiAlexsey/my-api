@@ -71,8 +71,10 @@ namespace my_api.Controllers
                 comment.User = users.Find(x => x.Id==comment.UserId);
             }
             Film film = films.Find(x => x.Id == id);
-            film.Comments = filmComments;
-            CommonResponse response = new CommonResponse(film);
+            FilmPage filmPage = new FilmPage();
+            filmPage.Film=film;
+            filmPage.Comments=filmComments;
+            CommonResponse response = new CommonResponse(filmPage);
             return response;
         }
     }
