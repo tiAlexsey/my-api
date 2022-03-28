@@ -77,5 +77,14 @@ namespace my_api.Controllers
             CommonResponse response = new CommonResponse(filmPage);
             return response;
         }
+
+        [HttpGet("list/search")]
+        public CommonResponse SeachFilmByName(string name = "")
+        {
+            List<Film> resultSearchFilms = films
+                .Where(x => x.Name.ToLower().Contains(name.ToLower())).ToList();
+            CommonResponse response = new CommonResponse(resultSearchFilms);
+            return response;
+        }
     }
 }
