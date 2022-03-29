@@ -1,9 +1,15 @@
-﻿namespace my_api
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace my_api
 {
     public class User
     {
+        [Column("Id")]
         public int Id { get; set; }
+        [Column("sName")]
         public string Name { get; set; }
+        [Column("sUrl")]
         public string Url { get; set; }
         
         public User(int id, string name, string url)
