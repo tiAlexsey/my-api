@@ -110,5 +110,51 @@ namespace my_api.Controllers
             CommonResponse response = new CommonResponse(newComment);
             return response;
         }
+
+        [HttpPost("comment/like")]
+        public CommonResponse LikeComment(int idComment, bool type)
+        {
+            using (ApplicationContext db = new ApplicationContext())
+            {
+                NewComment comment = db.Comments
+                    .Where(x => x.Id == idComment).FirstOrDefault();
+                if (type)
+                {
+                    comment.Like++;
+                }
+                else if (comment.Like > 0)
+                {
+                    comment.Like--;
+                }
+                db.Comments.Update(comment);
+                db.SaveChanges();
+            }
+
+            CommonResponse response = new CommonResponse("");
+            return response;
+        }
+
+        [HttpPost("comment/dislike")]
+        public CommonResponse DislikeComment(int idComment, bool type)
+        {
+            using (ApplicationContext db = new ApplicationContext())
+            {
+                NewComment comment = db.Comments
+                    .Where(x => x.Id == idComment).FirstOrDefault();
+                if (type)
+                {
+                    comment.Dislike++;
+                }
+                else if (comment.Dislike > 0)
+                {
+                    comment.Dislike--;
+                }
+                db.Comments.Update(comment);
+                db.SaveChanges();
+            }
+
+            CommonResponse response = new CommonResponse("");
+            return response;
+        }
     }
 }

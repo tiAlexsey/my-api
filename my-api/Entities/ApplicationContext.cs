@@ -21,11 +21,11 @@ namespace my_api.Entities
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=HOME-PC;Database=FilmPortalDB;Trusted_Connection=True;");
+                optionsBuilder.UseSqlServer("Server=HOME-PC;Database=PortalDB;Trusted_Connection=True;");
 
                 optionsBuilder.LogTo(message => System.Diagnostics.Debug.WriteLine(message));
                 optionsBuilder.LogTo(System.Console.WriteLine);
-                optionsBuilder.LogTo(Console.WriteLine, new[] { RelationalEventId.CommandExecuted });// только sql
+                optionsBuilder.LogTo(Console.WriteLine, new[] { RelationalEventId.CommandExecuted });
             }
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
