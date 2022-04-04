@@ -15,7 +15,7 @@ namespace my_api.Entities
         }
 
         public virtual DbSet<User> Users { get; set; }
-        public virtual DbSet<NewComment> Comments { get; set; }
+        public virtual DbSet<Comment> Comments { get; set; }
         public virtual DbSet<Film> Films { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

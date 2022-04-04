@@ -1,21 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace my_api
+﻿namespace my_api
 {
     public class NewComment 
     {
-        [Column("Id")]
-        public int Id { get; set; }
-        [Column("FilmId")]
         public int FilmId { get; set; }
-        [Column("sText")]
         public string Text { get; set; }
-        [Column("UserId")]
         public int UserId { get; set; }
-        [Column("iLike")]
-        public int Like { get; set; }
-        [Column("iDislike")]
-        public int Dislike { get; set; }
 
     }
 }

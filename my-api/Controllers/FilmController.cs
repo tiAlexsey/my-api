@@ -1,12 +1,15 @@
 ﻿using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using my_api.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace my_api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
     [EnableCors("_myAllowSpecificOrigins")]
+
+#nullable disable warnings
     public class FilmController : ControllerBase
     {
         public FilmController()
@@ -17,14 +20,14 @@ namespace my_api.Controllers
         public CommonResponse GetFilmList(int page = 1, int count = 10)
         {
             List<Film> films;
-            using (ApplicationContext db = new ApplicationContext())
+            using (ApplicationContext db = new())
             {
                 films = db.Films.ToList();
             }
             int iBegin = page * count - count;
             int iEnd = page * count;
             iEnd = (iEnd>films.Count) ? films.Count : iEnd;
-            List<Film> filmPage = new List<Film>(page);
+            List<Film> filmPage = new(page);
             CommonResponse response;
             try
             {
@@ -34,7 +37,7 @@ namespace my_api.Controllers
                 }
                 response = new CommonResponse(filmPage, films.Count);
             }
-            catch (Exception e)
+            catch (IndexOutOfRangeException)
             {
                 response = new CommonResponse(films, films.Count);
             }
@@ -44,80 +47,78 @@ namespace my_api.Controllers
         [HttpGet("item/{id:int}")]
         public CommonResponse GetFilm(int id)
         {
-            List<NewComment> comments;
-            List<Comment> commentsWithUser;
+            List<Comment> comments;
 
-            using (ApplicationContext db = new ApplicationContext())
+            using (ApplicationContext db = new())
             {
                 comments = db.Comments
-                    .ToList()
-                    .FindAll(x => x.FilmId == id)
+                    .Where(f => f.FilmId == id)
+                    .Include(u => u.User)
                     .ToList();
             }
 
-            commentsWithUser = Comment.convertToComment(comments);
-            foreach (Comment c in commentsWithUser)
+            Film film;
+            using (ApplicationContext db = new())
             {
-                using (ApplicationContext db = new ApplicationContext())
+                try
                 {
-                    c.User = db.Users
-                         .Where(x => x.Id==c.UserId)
-                         .FirstOrDefault();
+                    film = db.Films
+                    .Where(x => x.Id==id)
+                    .Single();
+                }
+                catch (InvalidOperationException)
+                {
+                    return new CommonResponse("Film not found");
                 }
             }
 
-            Film film;
-            using (ApplicationContext db = new ApplicationContext())
-            {
-                film = db.Films
-                    .Where(x => x.Id==id)
-                    .FirstOrDefault();
-            }
-
-            FilmPage filmPage = new FilmPage();
+            FilmPage filmPage = new();
             filmPage.Film=film;
-            filmPage.Comments=commentsWithUser;
-            CommonResponse response = new CommonResponse(filmPage);
+            filmPage.Comments=comments;
+            CommonResponse response = new(filmPage);
             return response;
         }
 
 
-        [HttpGet("list/search")]
+        [HttpGet("search")]
         public CommonResponse SeachFilmByName(string name)
         {
-            List<Film> films = new List<Film>();
-            using (ApplicationContext db = new ApplicationContext())
+            List<Film> films = new();
+            using (ApplicationContext db = new())
             {
                 films = db.Films
                     .Where(x => x.Name.ToLower().Contains(name.ToLower()))
                     .ToList();
             }
 
-            CommonResponse response = new CommonResponse(films);
+            CommonResponse response = new(films);
             return response;
         }
 
         [HttpPost("comment/add")]
         public CommonResponse AddComment(NewComment newComment)
         {
-            using (ApplicationContext db = new ApplicationContext())
+            Comment comment = new(newComment.FilmId, newComment.Text, newComment.UserId);
+
+            using (ApplicationContext db = new())
             {
-                db.Comments.Add(newComment);
-                Console.WriteLine(db.Comments.Add(newComment));
+                db.Comments.Add(comment);
                 db.SaveChanges();
             }
 
-            CommonResponse response = new CommonResponse(newComment);
+            CommonResponse response = new(comment, "Comment added");
             return response;
         }
 
         [HttpPost("comment/like")]
         public CommonResponse LikeComment(int idComment, bool type)
         {
-            using (ApplicationContext db = new ApplicationContext())
+            Comment comment;
+            using (ApplicationContext db = new())
             {
-                NewComment comment = db.Comments
-                    .Where(x => x.Id == idComment).FirstOrDefault();
+                comment = db.Comments
+                    .Where(x => x.Id == idComment)
+                    .FirstOrDefault();
                 if (type)
                 {
                     comment.Like++;
@@ -130,17 +131,19 @@ namespace my_api.Controllers
                 db.SaveChanges();
             }
 
-            CommonResponse response = new CommonResponse("");
+            CommonResponse response = new(comment, "Comment like changed");
             return response;
         }
 
         [HttpPost("comment/dislike")]
         public CommonResponse DislikeComment(int idComment, bool type)
         {
-            using (ApplicationContext db = new ApplicationContext())
+            Comment comment;
+            using (ApplicationContext db = new())
             {
-                NewComment comment = db.Comments
-                    .Where(x => x.Id == idComment).FirstOrDefault();
+                comment = db.Comments
+                    .Where(x => x.Id == idComment)
+                        .FirstOrDefault();
                 if (type)
                 {
                     comment.Dislike++;
@@ -153,7 +156,7 @@ namespace my_api.Controllers
                 db.SaveChanges();
             }
 
-            CommonResponse response = new CommonResponse("");
+            CommonResponse response = new(comment, "Comment dislike changed");
             return response;
         }
     }

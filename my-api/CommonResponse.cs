@@ -2,7 +2,7 @@
 {
     public class CommonResponse
     {
-        public object Item { get; set; }
+        public object? Item { get; set; }
         public int Total { get; set; }
         public string Message { get; set; }
 
@@ -10,6 +10,15 @@
         {
             Item = item;
             Total = total;
+            Message = message;
+        }
+        public CommonResponse(object item, string message)
+        {
+            Item = item;
+            Message = message;
+        }
+        public CommonResponse(string message)
+        {
             Message = message;
         }
     }

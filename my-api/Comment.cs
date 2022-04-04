@@ -1,48 +1,37 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace my_api
 {
     public class Comment
     {
+        [Column("Id")]
         public int Id { get; set; }
+
+        [Column("FilmId")]
         public int FilmId { get; set; }
+
+        [Column("sText")]
         public string Text { get; set; }
+
+        [Column("UserId")]
         public int UserId { get; set; }
+
+        [Column("iLike")]
         public int Like { get; set; }
+
+        [Column("iDislike")]
         public int Dislike { get; set; }
 
         public User User { get; set; }
 
-        public Comment(int id, int filmId, string text, int userId, int like = 0, int dislike = 0)
+        public Comment(int filmId, string text, int userId)
         {
-            Id = id;
+            Id = 0;
             FilmId = filmId;
-            Text = text;
             UserId = userId;
-            Like = like;
-            Dislike = dislike;
-        }
-        public Comment(NewComment newComment)
-        {
-            Id = newComment.Id;
-            FilmId = newComment.FilmId;
-            Text = newComment.Text;
-            UserId = newComment.UserId;
-            Like = newComment.Like;
-            Dislike = newComment.Dislike;
-        }
-
-        public static List<Comment> convertToComment(List<NewComment> comments)
-        {
-            List<Comment> commentsWithUser = new List<Comment>();
-
-            foreach (NewComment c in comments)
-            {
-                commentsWithUser.Add(new Comment(c));
-            }
-
-            return commentsWithUser;
+            Text = text;
+            Like = 0;
+            Dislike = 0;
         }
     }
 }
