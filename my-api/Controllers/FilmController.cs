@@ -16,17 +16,24 @@ namespace my_api.Controllers
         {
         }
 
-        [HttpGet("list")]
-        public CommonResponse GetFilmList(int page = 1, int count = 10)
-        {
-            int skipedCount = page * count - count;
 
+        [HttpGet("count")]
+        public CommonResponse GetFilmsCount()
+        {
             int countFilms;
             using (ApplicationContext db = new())
             {
                 countFilms = db.Films
                     .Count();
             }
+
+            return new CommonResponse(countFilms);
+        }
+
+        [HttpGet("list")]
+        public CommonResponse GetFilmList(int page = 1, int count = 10)
+        {
+            int skipedCount = page * count - count;
 
             List<Film> films;
             using (ApplicationContext db = new())
@@ -37,7 +44,7 @@ namespace my_api.Controllers
                     .ToList();
             }
 
-            return new CommonResponse(films, countFilms);
+            return new CommonResponse(films, films.Count);
         }
 
         [HttpGet("item/{id:int}")]
