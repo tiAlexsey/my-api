@@ -19,29 +19,25 @@ namespace my_api.Controllers
         [HttpGet("list")]
         public CommonResponse GetFilmList(int page = 1, int count = 10)
         {
+            int skipedCount = page * count - count;
+
+            int countFilms;
+            using (ApplicationContext db = new())
+            {
+                countFilms = db.Films
+                    .Count();
+            }
+
             List<Film> films;
             using (ApplicationContext db = new())
             {
-                films = db.Films.ToList();
+                films = db.Films
+                    .Skip(skipedCount)
+                    .Take(count)
+                    .ToList();
             }
-            int iBegin = page * count - count;
-            int iEnd = page * count;
-            iEnd = (iEnd>films.Count) ? films.Count : iEnd;
-            List<Film> filmPage = new(page);
-            CommonResponse response;
-            try
-            {
-                for (int i = iBegin; i < iEnd; i++)
-                {
-                    filmPage.Add(films[i]);
-                }
-                response = new CommonResponse(filmPage, films.Count);
-            }
-            catch (IndexOutOfRangeException)
-            {
-                response = new CommonResponse(films, films.Count);
-            }
-            return response;
+
+            return new CommonResponse(films, countFilms);
         }
 
         [HttpGet("item/{id:int}")]
@@ -78,7 +74,6 @@ namespace my_api.Controllers
             CommonResponse response = new(filmPage);
             return response;
         }
-
 
         [HttpGet("search")]
         public CommonResponse SeachFilmByName(string name)
@@ -143,7 +138,8 @@ namespace my_api.Controllers
             {
                 comment = db.Comments
                     .Where(x => x.Id == idComment)
-                        .FirstOrDefault();
+                    .FirstOrDefault();
+
                 if (type)
                 {
                     comment.Dislike++;
