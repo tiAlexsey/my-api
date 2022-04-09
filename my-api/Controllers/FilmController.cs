@@ -2,13 +2,13 @@
 using Microsoft.AspNetCore.Mvc;
 using my_api.Entities;
 using Microsoft.EntityFrameworkCore;
+using my_api.Model;
 
 namespace my_api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
     [EnableCors("_myAllowSpecificOrigins")]
-
 #nullable disable warnings
     public class FilmController : ControllerBase
     {
@@ -66,8 +66,8 @@ namespace my_api.Controllers
                 try
                 {
                     film = db.Films
-                    .Where(x => x.Id==id)
-                    .Single();
+                        .Where(x => x.Id == id)
+                        .Single();
                 }
                 catch (InvalidOperationException)
                 {
@@ -76,8 +76,8 @@ namespace my_api.Controllers
             }
 
             FilmPage filmPage = new();
-            filmPage.Film=film;
-            filmPage.Comments=comments;
+            filmPage.Film = film;
+            filmPage.Comments = comments;
             CommonResponse response = new(filmPage);
             return response;
         }
@@ -129,6 +129,7 @@ namespace my_api.Controllers
                 {
                     comment.Like--;
                 }
+
                 db.Comments.Update(comment);
                 db.SaveChanges();
             }
@@ -155,6 +156,7 @@ namespace my_api.Controllers
                 {
                     comment.Dislike--;
                 }
+
                 db.Comments.Update(comment);
                 db.SaveChanges();
             }

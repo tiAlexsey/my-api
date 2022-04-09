@@ -1,4 +1,4 @@
-﻿namespace my_api
+﻿namespace my_api.Model
 {
     public class FilmPage
     {
