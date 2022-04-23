@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using my_api.Entities;
 using Microsoft.EntityFrameworkCore;
 using my_api.Model;
+using my_api.MyLibrary;
 
 namespace my_api.Controllers
 {
