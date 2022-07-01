@@ -11,12 +11,11 @@ namespace my_api.Controllers
     [Route("[controller]")]
     [EnableCors("_myAllowSpecificOrigins")]
 #nullable disable warnings
-    public class FilmController : ControllerBase
+    public class FilmsController : ControllerBase
     {
-        public FilmController()
+        public FilmsController()
         {
         }
-
 
         [HttpGet("count")]
         public CommonResponse GetFilmsCount()
@@ -51,17 +50,9 @@ namespace my_api.Controllers
         [HttpGet("item/{id:int}")]
         public CommonResponse GetFilm(int id)
         {
-            List<Comment> comments;
-
-            using (ApplicationContext db = new())
-            {
-                comments = db.Comments
-                    .Where(f => f.FilmId == id)
-                    .Include(u => u.User)
-                    .ToList();
-            }
-
             Film film;
+            List<Comment> comments;
+            
             using (ApplicationContext db = new())
             {
                 try
@@ -75,16 +66,20 @@ namespace my_api.Controllers
                     return new CommonResponse("Film not found");
                 }
             }
+            
+            using (ApplicationContext db = new())
+            {
+                comments = db.Comments
+                    .Where(c => c.FilmId == id)
+                    .Include(u => u.User)
+                    .ToList();
+            }
 
-            FilmPage filmPage = new();
-            filmPage.Film = film;
-            filmPage.Comments = comments;
-            CommonResponse response = new(filmPage);
-            return response;
+            return new CommonResponse(new FilmPage(film, comments));
         }
 
-        [HttpGet("search")]
-        public CommonResponse SeachFilmByName(string name)
+        [HttpGet("Search")]
+        public CommonResponse SearchFilmByName(string name)
         {
             List<Film> films = new();
             using (ApplicationContext db = new())
@@ -94,8 +89,7 @@ namespace my_api.Controllers
                     .ToList();
             }
 
-            CommonResponse response = new(films);
-            return response;
+            return new CommonResponse(films);
         }
 
         [HttpPost("comment/add")]
@@ -109,8 +103,7 @@ namespace my_api.Controllers
                 db.SaveChanges();
             }
 
-            CommonResponse response = new(comment, "Comment added");
-            return response;
+            return new CommonResponse(comment, "Comment added");
         }
 
         [HttpPost("comment/like")]
@@ -122,6 +115,7 @@ namespace my_api.Controllers
                 comment = db.Comments
                     .Where(x => x.Id == idComment)
                     .FirstOrDefault();
+
                 if (type)
                 {
                     comment.Like++;
@@ -135,8 +129,7 @@ namespace my_api.Controllers
                 db.SaveChanges();
             }
 
-            CommonResponse response = new(comment, "Comment like changed");
-            return response;
+            return new CommonResponse(comment, "Comment like changed");
         }
 
         [HttpPost("comment/dislike")]
@@ -162,8 +155,7 @@ namespace my_api.Controllers
                 db.SaveChanges();
             }
 
-            CommonResponse response = new(comment, "Comment dislike changed");
-            return response;
+            return new CommonResponse(comment, "Comment dislike changed");
         }
     }
 }
