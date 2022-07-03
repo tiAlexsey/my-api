@@ -13,10 +13,10 @@ namespace my_api.Controllers
 #nullable disable warnings
     public class FilmsController : ControllerBase
     {
-        public FilmsController()
-        {
-        }
-
+        /// <summary>
+        /// Количество фильмов
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("count")]
         public CommonResponse GetFilmsCount()
         {
@@ -29,7 +29,12 @@ namespace my_api.Controllers
 
             return new CommonResponse(countFilms);
         }
-
+        /// <summary>
+        /// Список фильмов
+        /// </summary>
+        /// <param name="page">Страница</param>
+        /// <param name="count">Количество отображаемых элеметов на странице</param>
+        /// <returns></returns>
         [HttpGet("list")]
         public CommonResponse GetFilmList(int page = 1, int count = 10)
         {
@@ -46,7 +51,11 @@ namespace my_api.Controllers
 
             return new CommonResponse(films, films.Count);
         }
-
+        /// <summary>
+        /// Фильм
+        /// </summary>
+        /// <param name="id">Идентификатор фильма</param>
+        /// <returns></returns>
         [HttpGet("item/{id:int}")]
         public CommonResponse GetFilm(int id)
         {
@@ -77,8 +86,12 @@ namespace my_api.Controllers
 
             return new CommonResponse(new FilmPage(film, comments));
         }
-
-        [HttpGet("Search")]
+        /// <summary>
+        /// Поиск фильма
+        /// </summary>
+        /// <param name="name">Название фильма</param>
+        /// <returns></returns>
+        [HttpGet("search")]
         public CommonResponse SearchFilmByName(string name)
         {
             List<Film> films = new();
@@ -91,7 +104,11 @@ namespace my_api.Controllers
 
             return new CommonResponse(films);
         }
-
+        /// <summary>
+        /// Добавить комментарий к фильму
+        /// </summary>
+        /// <param name="newComment">Новый комментарий</param>
+        /// <returns></returns>
         [HttpPost("comment/add")]
         public CommonResponse AddComment(NewComment newComment)
         {
@@ -105,7 +122,12 @@ namespace my_api.Controllers
 
             return new CommonResponse(comment, "Comment added");
         }
-
+        /// <summary>
+        /// Поставить\снять лайк с комментария
+        /// </summary>
+        /// <param name="idComment">Ид комметария</param>
+        /// <param name="type">Поставить\снять</param>
+        /// <returns></returns>
         [HttpPost("comment/like")]
         public CommonResponse LikeComment(int idComment, bool type)
         {
@@ -131,7 +153,12 @@ namespace my_api.Controllers
 
             return new CommonResponse(comment, "Comment like changed");
         }
-
+        /// <summary>
+        /// Добавить или убрать дизлайк с комментария
+        /// </summary>
+        /// <param name="idComment">Ид комметария</param>
+        /// <param name="type">Добавить=True, снять=False</param>
+        /// <returns></returns>
         [HttpPost("comment/dislike")]
         public CommonResponse DislikeComment(int idComment, bool type)
         {
